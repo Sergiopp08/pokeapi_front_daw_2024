@@ -1,0 +1,32 @@
+name: Deploy HTML to Server
+
+
+on:
+  push:
+    branches: ["main",]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo -e "Host *\n  StrictHostKeyChecking no\n  IdentitiesOnly yes" > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+
+
+
+      - name: Deploy via SCP
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/*"
+          scp -o StrictHostKeyChecking=no -r ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/
