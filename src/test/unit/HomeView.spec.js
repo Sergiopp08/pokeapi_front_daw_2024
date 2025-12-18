@@ -92,37 +92,26 @@ describe("La vista de HomeView.vue" , () =>{
         expect(card[1].props('img')).toBeDefined()
     });
 
-    // Test Unitario
-    test("Cada card recibe correctamente las props name, number y to", async () => {
-        const mockData ={
-            results: [
-                { id: 1, name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
-            ]
-        }
-        const mockDetail = {
-            1: { sprites: { front_default: 'bulbasaur.png' } }
-        };
+   test("Cada card renderiza correctamente sus datos", async () => {
+  const wrapper = mount(Home, {
+    global: {
+      stubs: ['RouterLink']
+    }
+  })
 
-        global.fetch = vi.fn((url) => {
-            if (url.includes('/pokemon/?')) return Promise.resolve({ json: () => Promise.resolve(mockData) });
-            const id = url.split('/').filter(Boolean).pop();
-            return Promise.resolve({ json: () => Promise.resolve(mockDetail[id]) });
-        });
+  await flushPromises()
 
+  const card = wrapper.findAllComponents({ name: 'pokemonBoxComponent' })[0]
 
-        const wrapper = mount(Home, {
-        global: {
-            stubs: ['RouterLink']
-        }
-        })
-        await flushPromises()
-        const card = wrapper.findAllComponents({ name: 'pokemonBoxComponent' })[0]
-        expect(card.props('number')).toBe('1')
-        expect(card.props('name')).toBe("bulbasaur")
-        expect(card.props('to')).toBe("/pokemon/1")
-        expect(card.props('img')).toBeDefined()
-        
-    });
+  // Props
+  expect(card.props('number')).toBe('1')
+  expect(card.props('name')).toBe('bulbasaur')
+  expect(card.props('to')).toBe('/pokemon/1')
+
+  // DOM (ESTO es lo que hará fallar si borras el template)
+  expect(card.find('img').exists()).toBe(true)
+  expect(card.text()).toContain('bulbasaur')
+})
 
     // Test Unitario
     test("Muestra mensaje cuando pokemonList está vacío", async () => {
