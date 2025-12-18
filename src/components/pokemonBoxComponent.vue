@@ -1,11 +1,7 @@
 <template>
-  <RouterLink class="pokemon-box-item" :to="to">
-    <div class="pokemon-box-img-container">
-      <img :src="img" :alt="`Imagen de ${name}`" />
-    </div>
+  <div>
 
-    <span>{{ number + " " + name }}</span>
-  </RouterLink>
+  </div>
 </template>
 
 <script setup>
