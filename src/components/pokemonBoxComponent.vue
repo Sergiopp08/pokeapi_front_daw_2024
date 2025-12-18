@@ -1,8 +1,5 @@
-<template>
-  <div>
-
-  </div>
-</template>
+<div>
+</div>
 
 <script setup>
 const props = defineProps({
