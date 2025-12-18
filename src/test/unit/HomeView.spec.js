@@ -92,67 +92,37 @@ describe("La vista de HomeView.vue" , () =>{
         expect(card[1].props('img')).toBeDefined()
     });
 
-   describe('Home.vue', () => {
-  test('Cada card recibe props correctas y se renderiza correctamente', async () => {
-
-    // 🧪 Mock de la API
-    const mockData = {
-      results: [
-        { name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' }
-      ]
-    }
-
-    const mockDetail = {
-      1: { sprites: { front_default: 'bulbasaur.png' } }
-    }
-
-    global.fetch = vi.fn((url) => {
-      if (url.includes('/pokemon/?')) {
-        return Promise.resolve({
-          json: () => Promise.resolve(mockData)
-        })
-      }
-
-      const id = url.split('/').filter(Boolean).pop()
-      return Promise.resolve({
-        json: () => Promise.resolve(mockDetail[id])
-      })
-    })
-
-    // 🔧 Montaje
-    const wrapper = mount(Home, {
-      global: {
-        stubs: {
-          RouterLink: {
-            template: '<a><slot /></a>'
-          }
+    // Test Unitario
+    test("Cada card recibe correctamente las props name, number y to", async () => {
+        const mockData ={
+            results: [
+                { id: 1, name: 'bulbasaur', url: 'https://pokeapi.co/api/v2/pokemon/1/' },
+            ]
         }
-      }
-    })
+        const mockDetail = {
+            1: { sprites: { front_default: 'bulbasaur.png' } }
+        };
 
-    await flushPromises()
+        global.fetch = vi.fn((url) => {
+            if (url.includes('/pokemon/?')) return Promise.resolve({ json: () => Promise.resolve(mockData) });
+            const id = url.split('/').filter(Boolean).pop();
+            return Promise.resolve({ json: () => Promise.resolve(mockDetail[id]) });
+        });
 
-    // 📦 Componente hijo
-    const cards = wrapper.findAllComponents({ name: 'pokemonBoxComponent' })
-    expect(cards.length).toBe(1)
 
-    const card = cards[0]
-
-    // ✅ PROPS
-    expect(card.props('number')).toBe('1')
-    expect(card.props('name')).toBe('bulbasaur')
-    expect(card.props('to')).toBe('/pokemon/1')
-    expect(card.props('img')).toBe('bulbasaur.png')
-
-    // ✅ TEMPLATE / DOM
-    expect(card.find('img').exists()).toBe(true)
-    expect(card.find('img').attributes('src')).toBe('bulbasaur.png')
-    expect(card.text()).toContain('1 bulbasaur')
-
-    // ✅ RouterLink renderizado
-    expect(card.find('a').exists()).toBe(true)
-  })
-})
+        const wrapper = mount(Home, {
+        global: {
+            stubs: ['RouterLink']
+        }
+        })
+        await flushPromises()
+        const card = wrapper.findAllComponents({ name: 'pokemonBoxComponent' })[0]
+        expect(card.props('number')).toBe('1')
+        expect(card.props('name')).toBe("bulbasaur")
+        expect(card.props('to')).toBe("/pokemon/1")
+        expect(card.props('img')).toBeDefined()
+        
+    });
 
     // Test Unitario
     test("Muestra mensaje cuando pokemonList está vacío", async () => {

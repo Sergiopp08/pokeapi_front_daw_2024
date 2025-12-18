@@ -9,20 +9,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Descargar repositorio
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # 3️⃣ Instalar dependencias
       - name: Install dependencies
         run: npm install
 
+      # 4️⃣ Ejecutar TESTS (si fallan → se corta todo)
+      - name: Run unit tests
+        run: npm run test -- --run
+
+      # 5️⃣ Build (solo si los tests pasan)
       - name: Build Vue
         run: npm run build
 
+      # 6️⃣ Configurar SSH
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -31,13 +40,16 @@ jobs:
           echo -e "Host *\n  StrictHostKeyChecking no\n  IdentitiesOnly yes" > ~/.ssh/config
           chmod 600 ~/.ssh/config
 
+      # 7️⃣ Limpiar carpeta remota
       - name: Clean dist folder on server
         run: |
           ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/dist/*"
 
+      # 8️⃣ Deploy
       - name: Deploy dist via SCP
         run: |
-          scp -r dist/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/dist/
+          scp -r dist/* \
+          ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/dist/
 
 
 # name: Deploy HTML to Server
