@@ -3,7 +3,7 @@
     <div v-if="isLoading" class="loading-state">Cargando pokémon...</div>
     <div v-else-if="errorMessage" class="error-state">{{ errorMessage }}</div>
     <div v-else class="pokemons-container">
-    <!--
+    
       <pokemon-box-component
         v-for="pokemon in pokemonList"
         :key="pokemon.id"
@@ -12,7 +12,6 @@
         :img="pokemon.img"
         :to="`/pokemon/${pokemon.id}`"
       />
-      -->
     </div>
   </main>
 </template>

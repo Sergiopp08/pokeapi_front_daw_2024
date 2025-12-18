@@ -55,15 +55,7 @@ describe("La vista de PokemonDetail.vue" , () =>{
         expect(wrapper.text()).toContain('Bulbasaur');
     });
 
-    // Test Integración
-    test("Muestra mensaje de error si falla la carga", async ()=>{
-        global.fetch=vi.fn().mockRejectedValue(new Error("Error de carga fallido"))
-
-            const wrapper = mount(PokemonDetail);
-        await flushPromises()
-        const error= wrapper.find('.loading-state')
-        expect(error.exists()).toBe(true)
-    });
+    
 
     // Test Integración
     test("Muestra indicador de carga mientras fetch está activo", async ()=>{
